@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-agro-50 text-agro-950 font-sans;
+  }
+
+  /* Tira as setinhas dos inputs numéricos para um visual mais limpo. */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+}
+
+@layer components {
+  .field-input {
+    @apply w-full rounded-lg border border-agro-200 bg-white px-3 py-2 text-agro-900
+      placeholder:text-agro-300 shadow-sm outline-none transition
+      focus:border-agro-500 focus:ring-2 focus:ring-agro-500/30;
+  }
+
+  .card {
+    @apply rounded-2xl border border-agro-100 bg-white shadow-sm;
+  }
+}
