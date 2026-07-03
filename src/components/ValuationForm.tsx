@@ -51,9 +51,14 @@ export default function ValuationForm({
       });
     } else {
       const m = revenue > 0 ? valueToMargin(revenue, parseNumber(form.ebitdaValue) ?? 0) : 0;
+      // Formata no padrão BR (vírgula decimal) para exibir e reparsear corretamente.
+      // 2 casas minimizam a diferença ao converter um valor exato em percentual.
+      const marginStr = m.toLocaleString('pt-BR', {
+        maximumFractionDigits: 2,
+      });
       onChange({
         ebitdaMode: 'margin',
-        ebitdaMargin: m > 0 ? String(Math.round(m * 10) / 10) : form.ebitdaMargin,
+        ebitdaMargin: m > 0 ? marginStr : form.ebitdaMargin,
       });
     }
   };

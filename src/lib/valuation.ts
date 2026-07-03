@@ -480,11 +480,28 @@ export interface RawFormValues {
 
 export function parseNumber(value: string): number | null {
   if (value == null) return null;
-  const trimmed = String(value).trim();
-  if (trimmed === '') return null;
-  // Aceita entrada no padrão brasileiro (1.234,56) e também o padrão simples.
-  const normalized = trimmed.replace(/\./g, '').replace(',', '.');
-  const n = Number(normalized);
+  // Mantém apenas dígitos, separadores e sinal (remove "R$", "%", espaços…).
+  let s = String(value).trim().replace(/[^\d.,-]/g, '');
+  if (s === '' || s === '-') return null;
+
+  const hasComma = s.includes(',');
+  if (hasComma) {
+    // Vírgula é o separador decimal (padrão BR); pontos são milhares.
+    // Ex.: "1.234.567,89" → 1234567.89
+    s = s.replace(/\./g, '').replace(',', '.');
+  } else if (s.includes('.')) {
+    const parts = s.split('.');
+    if (parts.length > 2) {
+      // Vários pontos = separadores de milhar. Ex.: "1.234.567" → 1234567
+      s = parts.join('');
+    } else if (parts[1].length === 3) {
+      // Um ponto com exatamente 3 dígitos depois = milhar. Ex.: "720.000" → 720000
+      s = parts.join('');
+    }
+    // Caso contrário, o ponto é decimal e é mantido. Ex.: "16.7" → 16.7
+  }
+
+  const n = Number(s);
   return Number.isFinite(n) ? n : null;
 }
 

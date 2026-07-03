@@ -2,8 +2,40 @@ import { describe, expect, it } from 'vitest';
 import {
   calculateValuation,
   normalizeInputs,
+  parseNumber,
   type RawFormValues,
 } from './valuation';
+
+describe('parseNumber', () => {
+  it('lê inteiros e vazios', () => {
+    expect(parseNumber('720000')).toBe(720000);
+    expect(parseNumber('')).toBeNull();
+    expect(parseNumber('   ')).toBeNull();
+  });
+
+  it('trata ponto decimal como decimal (bug do toggle de margem)', () => {
+    // "16.7" deve ser 16,7 — não 167.
+    expect(parseNumber('16.7')).toBeCloseTo(16.7);
+    expect(parseNumber('16.75')).toBeCloseTo(16.75);
+  });
+
+  it('trata vírgula como separador decimal (padrão BR)', () => {
+    expect(parseNumber('16,7')).toBeCloseTo(16.7);
+    expect(parseNumber('1.234.567,89')).toBeCloseTo(1234567.89);
+  });
+
+  it('trata ponto com 3 dígitos como separador de milhar', () => {
+    expect(parseNumber('720.000')).toBe(720000);
+    expect(parseNumber('1.000')).toBe(1000);
+    expect(parseNumber('1.234.567')).toBe(1234567);
+  });
+
+  it('ignora símbolos de moeda/percentual e sinais', () => {
+    expect(parseNumber('R$ 40.000')).toBe(40000);
+    expect(parseNumber('35%')).toBe(35);
+    expect(parseNumber('-400000')).toBe(-400000);
+  });
+});
 
 const baseForm: RawFormValues = {
   revenue: '1000000',
