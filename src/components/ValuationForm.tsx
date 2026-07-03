@@ -12,6 +12,8 @@ interface ValuationFormProps {
   form: RawFormValues;
   onChange: (patch: Partial<RawFormValues>) => void;
   onReset: () => void;
+  /** Preenche o formulário com o cenário de referência da Agrosintropia. */
+  onLoadExample: () => void;
 }
 
 /**
@@ -19,7 +21,12 @@ interface ValuationFormProps {
  * O cálculo é reativo — quem recalcula é o componente pai a cada mudança —, por
  * isso não há botão de enviar, apenas "Limpar tudo".
  */
-export default function ValuationForm({ form, onChange, onReset }: ValuationFormProps) {
+export default function ValuationForm({
+  form,
+  onChange,
+  onReset,
+  onLoadExample,
+}: ValuationFormProps) {
   const revenue = parseNumber(form.revenue) ?? 0;
 
   // Conversão automática margem ⇄ valor exibida como dica ao lado do rótulo.
@@ -53,15 +60,25 @@ export default function ValuationForm({ form, onChange, onReset }: ValuationForm
 
   return (
     <div className="card p-5 sm:p-6">
-      <div className="mb-5 flex items-center justify-between">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-semibold text-agro-900">Dados da empresa</h2>
-        <button
-          type="button"
-          onClick={onReset}
-          className="rounded-lg px-3 py-1.5 text-sm font-medium text-agro-600 transition hover:bg-agro-50 hover:text-agro-800"
-        >
-          Limpar tudo
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={onLoadExample}
+            className="rounded-lg border border-agro-200 bg-agro-50 px-3 py-1.5 text-sm font-medium text-agro-700 transition hover:border-agro-300 hover:bg-agro-100"
+            title="Preenche com o cenário de referência da Agrosintropia"
+          >
+            🌿 Exemplo Agrosintropia
+          </button>
+          <button
+            type="button"
+            onClick={onReset}
+            className="rounded-lg px-3 py-1.5 text-sm font-medium text-agro-600 transition hover:bg-agro-50 hover:text-agro-800"
+          >
+            Limpar tudo
+          </button>
+        </div>
       </div>
 
       {/* ---------------- Obrigatórios ---------------- */}

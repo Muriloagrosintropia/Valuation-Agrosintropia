@@ -22,6 +22,22 @@ const EMPTY_FORM: RawFormValues = {
   sector: DEFAULT_SECTOR,
 };
 
+// Cenário de referência da própria Agrosintropia, calibrado a partir do
+// faturamento real (run-rate 2026 ~R$ 720 mil, custo ~R$ 50 mil/mês →
+// EBITDA ~R$ 120 mil, crescimento vs. 2025, recorrência dos contratos mensais,
+// caixa atual e sem dívida). Serve como exemplo pronto para a equipe.
+const AGROSINTROPIA_EXAMPLE: RawFormValues = {
+  revenue: '720000',
+  growth: '20',
+  ebitdaMode: 'value',
+  ebitdaMargin: '',
+  ebitdaValue: '120000',
+  recurringPct: '35',
+  cash: '40000',
+  debt: '0',
+  sector: 'servicos',
+};
+
 export default function App() {
   // Todo o estado vive na memória do React (sem backend, sem localStorage).
   const [form, setForm] = useState<RawFormValues>(EMPTY_FORM);
@@ -30,6 +46,8 @@ export default function App() {
     setForm((prev) => ({ ...prev, ...patch }));
 
   const reset = () => setForm(EMPTY_FORM);
+
+  const loadExample = () => setForm(AGROSINTROPIA_EXAMPLE);
 
   // Cálculo reativo: recalcula a cada mudança de campo, sem botão de enviar.
   const result = useMemo<ValuationResult | null>(() => {
@@ -62,7 +80,12 @@ export default function App() {
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="lg:sticky lg:top-6 lg:self-start">
-            <ValuationForm form={form} onChange={update} onReset={reset} />
+            <ValuationForm
+              form={form}
+              onChange={update}
+              onReset={reset}
+              onLoadExample={loadExample}
+            />
           </div>
           <ResultsPanel result={result} />
         </div>
